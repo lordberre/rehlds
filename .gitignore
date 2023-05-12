@@ -1,2 +1,2 @@
-# MacOS filesystem
-.DS_Store
+temp/
+build.log
