@@ -1,5 +1,7 @@
 FROM debian:bookworm-slim
 
+ARG VERSION
+ENV VERSION $VERSION
 ARG mod=cstrike
 ARG hlds_build=8684
 ARG rehlds_version=3.12.0.780
@@ -19,7 +21,9 @@ ARG anti_cheats="reaimdetector_$reaimdetector_version.tar.gz whblocker_$whblocke
 ARG resources_amxbanslist_url=https://dl.rehlds.ru/metamod/ReChecker/recheker_base/Resources_Checker_Base-amx_ban.zip
 ## See https://rehlds.ru/
 
-# Fix warning:
+# Persistent paths
+VOLUME /opt/steam/hlds/$mod
+
 # WARNING: setlocale('en_US.UTF-8') failed, using locale: 'C'.
 # International characters may not work.
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -53,13 +57,16 @@ RUN apt-get -y update && apt-get install -y --no-install-recommends \
 USER steam
 WORKDIR /opt/steam
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# Start by copying data from the current running container or earlier
+COPY --chown=steam:steam ./cstrike_data/ /opt/steam/hlds/$mod
 COPY --chown=steam:steam ./lib/hlds.install /opt/steam
 
 RUN curl -sL "$steamcmd_url" | tar xzvf - \
     && ./steamcmd.sh +runscript hlds.install
 
 RUN curl -sLJO "$hlds_url" \
-    && unzip "hlds_build_$hlds_build.zip" -d "/opt/steam" \
+    && unzip -o "hlds_build_$hlds_build.zip" -d "/opt/steam" \
     && rm -rf hlds_build_$hlds_build/libSDL2.so \
     && cp -R "hlds_build_$hlds_build"/* hlds/ \
     && rm -rf "hlds_build_$hlds_build" "hlds_build_$hlds_build.zip"
@@ -76,18 +83,18 @@ RUN touch /opt/steam/hlds/$mod/banned.cfg
 
 # Install reverse-engineered HLDS
 RUN curl -sLJO "$rehlds_url" \
-    && unzip "rehlds-bin-$rehlds_version.zip" -d "/opt/steam/rehlds" \
+    && unzip -o "rehlds-bin-$rehlds_version.zip" -d "/opt/steam/rehlds" \
     && cp -R /opt/steam/rehlds/bin/linux32/* /opt/steam/hlds/ \
     && rm -rf "rehlds-bin-$rehlds_version.zip" "/opt/steam/rehlds"
 
 # Install ReGameDLL
 RUN curl -sLJO "$regamedll_url" \
-    && unzip "regamedll-bin-$regamedll_version.zip" -d "/opt/steam/regamedll" \
+    && unzip -o "regamedll-bin-$regamedll_version.zip" -d "/opt/steam/regamedll" \
     && cp -R /opt/steam/regamedll/bin/linux32/cstrike/* /opt/steam/hlds/cstrike \
     && rm -rf "regamedll-bin-$regamedll_version.zip" "/opt/steam/regamedll"
 
 # Install Metamod-R
-RUN curl -sLJO "$metamod_url" && unzip metamod-bin-$metamod_version.zip -d /opt/steam/hlds/$mod/
+RUN curl -sLJO "$metamod_url" && unzip -o metamod-bin-$metamod_version.zip -d /opt/steam/hlds/$mod/
 RUN sed -i 's/dlls\/hl\.so/addons\/metamod\/dlls\/metamod.so/g' /opt/steam/hlds/$mod/liblist.gam
 
 # Install AMX mod X 
@@ -107,7 +114,7 @@ RUN cp -R /opt/steam/anticheats/linux/* /opt/steam/hlds/$mod/
 RUN mkdir -p /opt/steam/hlds/$mod/addons/rechecker
 RUN cp -R /opt/steam/anticheats/rechecker_mm_*.so /opt/steam/hlds/$mod/addons/rechecker
 RUN cp -R /opt/steam/anticheats/resources.ini /opt/steam/hlds/$mod/addons/rechecker
-RUN mkdir /opt/steam/hlds/$mod/addons/rechecker/logs
+RUN mkdir -p /opt/steam/hlds/$mod/addons/rechecker/logs
 RUN curl -sLJO $resources_amxbanslist_url && unzip -o /opt/steam/Resources_Checker_Base-amx_ban.zip -d /opt/steam/hlds/$mod/addons/rechecker
 RUN cp -R /opt/steam/anticheats/linux/addons /opt/steam/hlds/$mod
 RUN cd /opt/steam/hlds/$mod/addons/amxmodx/scripting && ./amxxpc reaimdetector.sma
@@ -119,7 +126,7 @@ RUN echo "linux addons/rechecker/rechecker_mm_i386.so" >> /opt/steam/hlds/$mod/a
 RUN echo "linux addons/whblocker/whblocker_mm_i386.so" >> /opt/steam/hlds/$mod/addons/metamod/plugins.ini
 RUN echo "reaimdetector" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/modules.ini
 RUN echo "reaimdetector.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
-
+RUN echo "hlstatsx_commands_cstrike.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
 
 # Install dproto
 # RUN mkdir -p /opt/steam/hlds/$mod/addons/dproto
@@ -137,19 +144,22 @@ WORKDIR /opt/steam/hlds
 # Copy default config
 COPY --chown=steam:steam $mod $mod
 
+# Update build log
+RUN echo "$(date -Iseconds) Docker build completed for VERSION=$VERSION" >> $mod/DOCKERLOG.log
+
 RUN chmod +x hlds_run hlds_linux
 
 RUN echo 10 > steam_appid.txt
 
-EXPOSE 27015
-EXPOSE 27015/udp
-EXPOSE 26900/udp
+EXPOSE 27031
+EXPOSE 27031/udp
+EXPOSE 26901/udp
 
 # Start server
 ENTRYPOINT ["./hlds_run", "-game cstrike", "-timeout 3", "-pingboost 2"]
 
 # Default start parameters
-CMD ["-port 27015", "+maxplayers 16", "+map aim_map"]
+CMD ["-port 27031", "+maxplayers 16", "+map aim_map"]
 
 # Debug
 # USER root
