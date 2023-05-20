@@ -140,15 +140,15 @@ RUN chmod +x hlds_run hlds_linux
 
 RUN echo 10 > steam_appid.txt
 
-EXPOSE 27016
-EXPOSE 27016/udp
-EXPOSE 26902/udp
+EXPOSE 27017
+EXPOSE 27017/udp
+EXPOSE 26903/udp
 
 # Start server
 ENTRYPOINT ["./hlds_run", "-game cstrike", "-timeout 3", "-pingboost 2"]
 
 # Default start parameters
-CMD ["-port 27016", "+maxplayers 16", "+map aim_map"]
+CMD ["-port 27017", "+maxplayers 16", "+map aim_map"]
 
 # Debug
 # USER root
