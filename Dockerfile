@@ -59,7 +59,7 @@ WORKDIR /opt/steam
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Start by copying data from the current running container or earlier
-COPY --chown=steam:steam ./cstrike_data/ /opt/steam/hlds/$mod
+# COPY --chown=steam:steam ./cstrike_data/ /opt/steam/hlds/$mod
 COPY --chown=steam:steam ./lib/hlds.install /opt/steam
 
 RUN curl -sL "$steamcmd_url" | tar xzvf - \
@@ -129,14 +129,9 @@ RUN echo "reaimdetector.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plu
 
 # Enabled custom amx plugins
 RUN echo "hlstatsx_commands_cstrike.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
-RUN echo "AQS.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
 
-# Install dproto
-# RUN mkdir -p /opt/steam/hlds/$mod/addons/dproto
-# COPY --chown=steam:steam lib/dproto/bin/Linux/dproto_i386.so /opt/steam/hlds/$mod/addons/dproto/dproto_i386.so
-# COPY lib/dproto/dproto.cfg /opt/steam/hlds/$mod/dproto.cfg
-# RUN echo 'linux addons/dproto/dproto_i386.so' >> /opt/steam/hlds/$mod/addons/metamod/plugins.ini
-# COPY lib/dproto/amxx/* /opt/steam/hlds/$mod/addons/amxmodx/scripting/
+# RePugMod
+RUN echo "linux addons/pugmod/dlls/pugmod_mm.so" >> /opt/steam/hlds/$mod/addons/metamod/plugins.ini
 
 # Install bind_key
 COPY --chown=steam:steam lib/bind_key/amxx/bind_key.amxx /opt/steam/hlds/$mod/addons/amxmodx/plugins/bind_key.amxx
@@ -154,15 +149,15 @@ RUN chmod +x hlds_run hlds_linux
 
 RUN echo 10 > steam_appid.txt
 
-EXPOSE 27031
-EXPOSE 27031/udp
-EXPOSE 26901/udp
+EXPOSE 27016
+EXPOSE 27016/udp
+EXPOSE 26902/udp
 
 # Start server
 ENTRYPOINT ["./hlds_run", "-game cstrike", "-timeout 3", "-pingboost 2"]
 
 # Default start parameters
-CMD ["-port 27031", "+maxplayers 16", "+map aim_map"]
+CMD ["-port 27016", "+maxplayers 16", "+map aim_map"]
 
 # Debug
 # USER root
