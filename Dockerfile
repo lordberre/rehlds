@@ -126,7 +126,10 @@ RUN echo "linux addons/rechecker/rechecker_mm_i386.so" >> /opt/steam/hlds/$mod/a
 RUN echo "linux addons/whblocker/whblocker_mm_i386.so" >> /opt/steam/hlds/$mod/addons/metamod/plugins.ini
 RUN echo "reaimdetector" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/modules.ini
 RUN echo "reaimdetector.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
+
+# Enabled custom amx plugins
 RUN echo "hlstatsx_commands_cstrike.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
+RUN echo "AQS.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
 
 # Install dproto
 # RUN mkdir -p /opt/steam/hlds/$mod/addons/dproto

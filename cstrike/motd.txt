@@ -1,28 +1,21 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Berres server</title>
-<style type="text/css">
-       body {
-            background: #000;
-            margin: 8px;
-            color: #FFB000;
-            font: normal 16px/20px Verdana, Tahoma, sans-serif;
-        }
-
-        a {
-            color: #FFF;
-            text-decoration: underline;
-        }
-
-        a:hover {
-            color: #EEE;
-            text-decoration: none;
-        }
+<title>
+Project-Mayhem.se</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content="berres server, project-mayhem.se">
+<style>
+body {background-color:#ffffff;background-repeat:no-repeat;background-position:top left;background-attachment:fixed;}
+h1{font-family:Arial, sans-serif;color:#000000;background-color:#ffffff;}
+p {font-family:Helvetica, sans-serif;font-size:16px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}
 </style>
 </head>
 <body>
-Alltid full!
+<h1>Berres server | project-mayhem.se</h1>
+
+<p>HLStats: <a href="url">http://stats.project-mayhem.se</p></link>
+
+<img src="http://project-mayhem.se/pepeok.png" alt="Italian Trulli">
 </body>
 </html>
