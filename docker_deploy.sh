@@ -1,7 +1,7 @@
 #!/bin/bash
 VERSION=$(git log -1 --pretty=%h)
-CONTAINER=lordberre_hlds_dev
-IMAGE=lordberre_hlds_dev
+CONTAINER=lordberre_hlds
+IMAGE=lordberre_hlds
 
 # Add current server data and build/update
 # docker network create --subnet=172.99.0.0/16 hlds_network
