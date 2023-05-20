@@ -33,11 +33,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV LANG en_US.utf8
 ENV LC_ALL en_US.UTF-8
 
-# Fix error:
-# Unable to determine CPU Frequency. Try defining CPU_MHZ.
-# Exiting on SPEW_ABORT
-# ENV CPU_MHZ=2300
-
 RUN groupadd -r steam && useradd -r -g steam -m -d /opt/steam steam
 
 RUN dpkg --add-architecture i386
@@ -132,10 +127,6 @@ RUN echo "hlstatsx_commands_cstrike.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx
 
 # RePugMod
 RUN echo "linux addons/pugmod/dlls/pugmod_mm.so" >> /opt/steam/hlds/$mod/addons/metamod/plugins.ini
-
-# Install bind_key
-COPY --chown=steam:steam lib/bind_key/amxx/bind_key.amxx /opt/steam/hlds/$mod/addons/amxmodx/plugins/bind_key.amxx
-RUN echo 'bind_key.amxx            ; binds keys for voting' >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
 
 WORKDIR /opt/steam/hlds
 
