@@ -13,8 +13,7 @@ p {font-family:Helvetica, sans-serif;font-size:16px;font-style:normal;font-weigh
 </head>
 <body>
 <h1>Berres server | project-mayhem.se</h1>
-
-<p>HLStats: <a href="url">http://stats.project-mayhem.se</p></link>
+<p>HLStats: <a href="http://stats.project-mayhem.se/">stats.project-mayhem.se</a></p>
 
 <img src="http://project-mayhem.se/pepeok.png" alt="Italian Trulli">
 </body>

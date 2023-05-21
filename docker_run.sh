@@ -1,4 +1,7 @@
 #!/bin/bash
 source .env
-docker run --network=hlds_network --cpuset-cpus="1" --ip 172.99.0.3 -d --restart=always --name $CONTAINER -p 27016:27016/udp -p 27016:27016/tcp -p 26902:26902/udp $CONTAINER
-
+if [[ $FOREGROUND == true ]]; then
+    docker run --network=hlds_network --cpuset-cpus="0" --ip $HLDS_IP -it --restart=always --name $CONTAINER -p $HLDS_PORT:$HLDS_PORT/udp -p $HLDS_PORT:$HLDS_PORT/tcp -p $HLDS_VACPORT:$HLDS_VACPORT/udp $CONTAINER
+else
+    docker run --network=hlds_network --cpuset-cpus="0" --ip $HLDS_IP -d --restart=always --name $CONTAINER -p $HLDS_PORT:$HLDS_PORT/udp -p $HLDS_PORT:$HLDS_PORT/tcp -p $HLDS_VACPORT:$HLDS_VACPORT/udp $CONTAINER
+fi
