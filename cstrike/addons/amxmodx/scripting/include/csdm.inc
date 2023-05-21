@@ -1,23 +1,19 @@
-/**
- * (C)2003-2006 David "BAILOPAN" Anderson
- * Counter-Strike Deathmatch (CSDM) 2.10 Module Includes
- */
-
 #if defined _csdm_included
-  #endinput
+	#endinput
 #endif
+
 #define _csdm_included
 
 #if AMXX_VERSION_NUM >= 175
- #pragma reqlib csdm
- #if !defined AMXMODX_NOAUTOLOAD
-  #pragma loadlib csdm
- #endif
+	#pragma reqlib csdm
+	#if !defined AMXMODX_NOAUTOLOAD
+		#pragma loadlib csdm
+	#endif
 #else
- #pragma library csdm
+	#pragma library csdm
 #endif
 
-#define	CSDM_VERSION	"2.1.1"
+#define	CSDM_VERSION	 "3.6"
 
 #define	CFG_READ		0		//Line is being read normally
 #define	CFG_RELOAD		1		//Section is being parsed from the start
@@ -31,12 +27,14 @@
 
 #define CSDM_FFA_ENABLE		3
 #define CSDM_FFA_DISABLE	2
-#define CSDM_ENABLE			1
+#define CSDM_ENABLE		1
 #define CSDM_DISABLE		0
 
 #define CSDM_DROP_CONTINUE	0	//continue normally
 #define CSDM_DROP_REMOVE	1	//remove the dropped weapon
 #define CSDM_DROP_IGNORE	2	//ignore entirely
+
+#define CSDM_MAXPLAYERS		32
 
 /************
  * FORWARDS *
@@ -131,29 +129,39 @@ native csdm_reg_cfg(const sectionName[], const handler[]);
 native csdm_give_item(player, const item_name[]);
 
 //Forces a player to drop a weapon
-native csdm_force_drop(player, const weapon[], remove=1);
+native csdm_force_drop(player, const weapon[], remove = 1);
 
 //Schedules a weapon for removal.  0 seconds means immediate
 //delay specifies whether it should wait 0.1 seconds or not (0 for immediate lookup)
 native csdm_remove_weapon(player, const weapon[], seconds, delay);
 
+//Schedules a weapon for removal.  0 seconds means immediate
+//delay specifies whether it should wait 0.1 seconds or not (0 for immediate lookup)
+native csdm_remove_weaponbox(player, ent, seconds, delay, shield);
+
+// remove all entity is find name
+native csdm_remove_entity_all(const NameEnt[]);
+
 //Reloads the config file
 //If you specify a named file, CSDM auto-prepends the configs dir.
 // I.e., passing csdm\mapconfigs\de_dust2.cfg will turn into:
 // addons\amxmodx\configs\csdm\mapconfigs\de_dust2.cfg
-native csdm_reload_cfg(const file[]="");
+native csdm_reload_cfg(const file[] = "");
 
 //Returns whether CSDM is active
 native csdm_active();
+
 //Sets CSDM to active (do not set the cvar!)
 native csdm_set_active(on_or_off);
 
 //Returns/sets the current FFA (free for all) state
 native csdm_get_ffa();
+
 native csdm_set_ffa(on_or_off);
 
 //Gets/sets the respawn wait time
 native Float:csdm_get_spawnwait();
+
 native csdm_set_spawnwait(Float:time);
 
 //returns cache information into each array slot
@@ -165,7 +173,7 @@ native csdm_set_spawnwait(Float:time);
 // 5 - number of weapon find tasks in cache
 // in general, 0+5+4 should about equal 1+2
 // do not edit the vers parameter.
-native csdm_cache(ar[6], vers=2)
+native csdm_cache(ar[6], vers = 2);
 
 //Quick hack to replace engine dependency and work around a FM bug
 //returns 1 if a hull collision is found
@@ -174,7 +182,7 @@ native csdm_trace_hull(Float:origin[3], hull_no);
 //Disables the CSDM welcome message
 //This is useful if you only use CSDM as an engine
 //Returns the old value.  Pass -1 to do nothing.
-native csdm_set_intromsg(value=-1);
+native csdm_set_intromsg(value = -1);
 
 /**
  * Natives defined by csdm_main 
@@ -183,7 +191,10 @@ native csdm_set_intromsg(value=-1);
 //Returns the handle for the main CSDM menu, letting you modify it.
 native csdm_main_menu();
 
-#define CSDM_OPTION_SAYRESPAWN	1		//No extra parameters
+//Returns the handle for the settings CSDM menu, letting you modify it.
+native csdm_settings_menu();
+
+#define CSDM_OPTION_SAYRESPAWN		1	//No extra parameters
 #define CSDM_SET_DISABLED		-1
 #define CSDM_SET_DEFAULT		0
 #define CSDM_SET_ENABLED		1
@@ -195,14 +206,20 @@ native csdm_set_mainoption(option, setting, ...);
 //If weapon_id is -1, name should be "weapon_shield"
 native csdm_fwd_drop(player, weapon_id, const name[]);
 
+// Writes the Value of the Setting Parameter in the Section of csdm.cfg
+native csdm_write_cfg(id, const section[], const parameter[], const value[]);
+
+// Respawn All Player
+native csdm_respawn_all_player();
+
 /*** ************ ***
  *** HELPER STUFF 
  ***/
  
-#define	SLOT_PRIMARY	1
-#define	SLOT_SECONDARY	2
+#define	SLOT_PRIMARY		1
+#define	SLOT_SECONDARY		2
 #define	SLOT_KNIFE		3
-#define	SLOT_GRENADE	4
+#define	SLOT_GRENADE		4
 #define	SLOT_C4			5
 
 #define	_TEAM_T			1
@@ -241,59 +258,60 @@ stock g_WeaponSlots[] = {
 		1,	//CSW_AK47
 		3,	//CSW_KNIFE
 		1	//CSW_P90
-	};
+};
 	
 //Maximum backpack ammo lookup table
 stock g_MaxBPAmmo[] = {
 		0,
-		52,	//CSW_P228
+		52,		//CSW_P228
 		0,
-		90,	//CSW_SCOUT
-		1,	//CSW_HEGRENADE
-		32,	//CSW_XM1014
-		1,	//CSW_C4
-		100,//CSW_MAC10
-		90,	//CSW_AUG
-		1,	//CSW_SMOKEGRENADE
-		120,//CSW_ELITE
-		100,//CSW_FIVESEVEN
-		100,//CSW_UMP45
-		90,	//CSW_SG550
-		90,	//CSW_GALIL
-		90,	//CSW_FAMAS
-		100,//CSW_USP
-		120,//CSW_GLOCK18
-		30,	//CSW_AWP
-		120,//CSW_MP5NAVY
-		200,//CSW_M249
-		32,	//CSW_M3
-		90,	//CSW_M4A1
-		120,//CSW_TMP
-		90,	//CSW_G3SG1
-		2,	//CSW_FLASHBANG
-		35,	//CSW_DEAGLE
-		90,	//CSW_SG552
-		90,	//CSW_AK47
-		0,	//CSW_KNIFE
-		100//CSW_P90
-	};
+		90,		//CSW_SCOUT
+		1,		//CSW_HEGRENADE
+		32,		//CSW_XM1014
+		1,		//CSW_C4
+		100,		//CSW_MAC10
+		90,		//CSW_AUG
+		1,		//CSW_SMOKEGRENADE
+		120,		//CSW_ELITE
+		100,		//CSW_FIVESEVEN
+		100,		//CSW_UMP45
+		90,		//CSW_SG550
+		90,		//CSW_GALIL
+		90,		//CSW_FAMAS
+		100,		//CSW_USP
+		120,		//CSW_GLOCK18
+		30,		//CSW_AWP
+		120,		//CSW_MP5NAVY
+		200,		//CSW_M249
+		32,		//CSW_M3
+		90,		//CSW_M4A1
+		120,		//CSW_TMP
+		90,		//CSW_G3SG1
+		2,		//CSW_FLASHBANG
+		35,		//CSW_DEAGLE
+		90,		//CSW_SG552
+		90,		//CSW_AK47
+		0,		//CSW_KNIFE
+		100		//CSW_P90
+};
 	
-#define getWepId(%1) get_weaponid(%1)
+#define getWepId(%1)	get_weaponid(%1)
 
 stock bool:IsValidTeam(team)
 {
-	if (team == 1 || team == 2)
-		return true
-	return false
+	if (team == 1 || team == 2) {
+		return true;
+	}
+	return false;
 }
 
 stock drop_with_shield(player, weapon_id)
 {
-	new name[32]
-	get_weaponname(weapon_id, name, 31)
-	csdm_force_drop(player, "weapon_shield", 0)
-	csdm_force_drop(player, name, 0)
-	csdm_fwd_drop(player, -1, "weapon_shield")
-	csdm_fwd_drop(player, weapon_id, name)
-	csdm_give_item(player, "weapon_shield")
+	new name[32];
+	get_weaponname(weapon_id, name, charsmax(name));
+	csdm_force_drop(player, "weapon_shield", 0);
+	csdm_force_drop(player, name, 0);
+	csdm_fwd_drop(player, -1, "weapon_shield");
+	csdm_fwd_drop(player, weapon_id, name);
+	csdm_give_item(player, "weapon_shield");
 }
