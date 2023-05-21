@@ -59,7 +59,7 @@ WORKDIR /opt/steam
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Start by copying data from the current running container or earlier
-# COPY --chown=steam:steam ./cstrike_data/ /opt/steam/hlds/$mod
+COPY --chown=steam:steam ./cstrike_data/ /opt/steam/hlds/$mod
 COPY --chown=steam:steam ./lib/hlds.install /opt/steam
 
 RUN curl -sL "$steamcmd_url" | tar xzvf - \
@@ -129,6 +129,11 @@ RUN echo "reaimdetector.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plu
 
 # Enabled custom amx plugins
 RUN echo "hlstatsx_commands_cstrike.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
+RUN echo "AQS.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
+
+# Install bind_key
+COPY --chown=steam:steam lib/bind_key/amxx/bind_key.amxx /opt/steam/hlds/$mod/addons/amxmodx/plugins/bind_key.amxx
+RUN echo 'bind_key.amxx            ; binds keys for voting' >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
 
 WORKDIR /opt/steam/hlds
 
