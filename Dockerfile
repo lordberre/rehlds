@@ -2,6 +2,11 @@ FROM debian:bookworm-slim
 
 ARG VERSION
 ENV VERSION $VERSION
+ARG PORT
+ENV PORT $PORT
+ARG VAC_PORT
+ENV VAC_PORT $VAC_PORT
+
 ARG mod=cstrike
 ARG hlds_build=8684
 ARG rehlds_version=3.12.0.780
@@ -125,9 +130,6 @@ RUN echo "reaimdetector.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plu
 # Enabled custom amx plugins
 RUN echo "hlstatsx_commands_cstrike.amxx" >> /opt/steam/hlds/$mod/addons/amxmodx/configs/plugins.ini
 
-# RePugMod
-RUN echo "linux addons/pugmod/dlls/pugmod_mm.so" >> /opt/steam/hlds/$mod/addons/metamod/plugins.ini
-
 WORKDIR /opt/steam/hlds
 
 # Copy default config
@@ -140,15 +142,16 @@ RUN chmod +x hlds_run hlds_linux
 
 RUN echo 10 > steam_appid.txt
 
-EXPOSE 27017
-EXPOSE 27017/udp
-EXPOSE 26903/udp
+EXPOSE ${PORT}
+EXPOSE ${PORT}/udp
+EXPOSE ${VAC_PORT}/udp
 
 # Start server
 ENTRYPOINT ["./hlds_run", "-game cstrike", "-timeout 3", "-pingboost 2"]
 
 # Default start parameters
-CMD ["-port 27017", "+maxplayers 16", "+map aim_map"]
+# RUN PORT_CMD=$(echo "-port $PORT")
+CMD ["-port 27017", "+maxplayers 16", "+map de_dust2"]
 
 # Debug
 # USER root
