@@ -32,11 +32,11 @@ new PLUGINNAME[] = "ReCSDM Spawns";
 new VERSION[] = CSDM_VERSION;
 new AUTHORS[] = "ReCSDM Team";
 
-new g_MainMenu[] = "Менеджер точек возрождения";
+new g_MainMenu[] = "CSDM: Spawn Manager";
 new g_MainMenuID = -1;
 new g_cMain;
 
-new g_AddSpawnsMenu[] = "Меню добавления точек возрождения";
+new g_AddSpawnsMenu[] = "CSDM: Add Spawns Menu";
 new g_AddSpawnsMenuID;
 new g_cAddSpawns;
 
@@ -71,7 +71,7 @@ public plugin_init()
 {
 	register_plugin(PLUGINNAME,VERSION,AUTHORS);
 
-	register_concmd("edit_spawns", "showmen", ADMIN_MAP, "Редактирование конфигурации точек возрождения");
+	register_concmd("edit_spawns", "showmen", ADMIN_MAP, "Edits spawn configuration");
 
 	g_iszInfoTarget = engfunc(EngFunc_AllocString, "info_target");
 
@@ -79,7 +79,7 @@ public plugin_init()
 
 	if (g_MainPlugin) {
 		new menu = csdm_main_menu();
-		menu_additem(menu, "Редактор точек возрождения", "edit_spawns", ADMIN_MAP);
+		menu_additem(menu, "Spawn Editor", "edit_spawns", ADMIN_MAP);
 	}
 }
 
@@ -258,20 +258,20 @@ buildMenu()
 
 	g_cMain = menu_makecallback("c_Main");
 
-	menu_additem(g_MainMenuID, "Добавить текущую позицию для возрождения","1", 0, g_cMain);
-	menu_additem(g_MainMenuID, "Редактировать ближайшую точку возраждения (желтая) на текущей позиции","2", 0, g_cMain);
-	menu_additem(g_MainMenuID, "Удалить ближайшую точку возрождения","3", 0, g_cMain);
-	menu_additem(g_MainMenuID, "Обновить ближайшую точку возрождения", "4", 0, g_cMain);
-	menu_additem(g_MainMenuID, "Показать статистику", "5", 0, -1);
-	menu_additem(g_MainMenuID, "Назад", "6", 0, -1);
+	menu_additem(g_MainMenuID, "Add current position to Spawn","1", 0, g_cMain);
+	menu_additem(g_MainMenuID, "Edit closest spawn (yellow) to Current Position","2", 0, g_cMain);
+	menu_additem(g_MainMenuID, "Delete closest Spawn","3", 0, g_cMain);
+	menu_additem(g_MainMenuID, "Refresh Closest Spawn", "4", 0, g_cMain);
+	menu_additem(g_MainMenuID, "Show statistics", "5", 0, -1);
+	menu_additem(g_MainMenuID, "Back", "6", 0, -1);
 
 	g_AddSpawnsMenuID = menu_create(g_AddSpawnsMenu, "m_AddSpawnsHandler");
 	g_cAddSpawns = menu_makecallback("c_AddSpawns");
 
-	menu_additem(g_AddSpawnsMenuID, "Добавить на текущую позицию для возрождения всем","1", 0, g_cAddSpawns);
-	menu_additem(g_AddSpawnsMenuID, "Добавить текущую позицию для возрождения T","2", 0, g_cAddSpawns);
-	menu_additem(g_AddSpawnsMenuID, "Добавить текущую позицию для возрождения CT","3", 0, g_cAddSpawns);
-	menu_additem(g_AddSpawnsMenuID, "Назад","4", 0, -1);	
+	menu_additem(g_AddSpawnsMenuID, "Add Current Postion as a random spawn","1", 0, g_cAddSpawns);
+	menu_additem(g_AddSpawnsMenuID, "Add Current Postion as a T spawn","2", 0, g_cAddSpawns);
+	menu_additem(g_AddSpawnsMenuID, "Add Current Postion as a CT spawn","3", 0, g_cAddSpawns);
+	menu_additem(g_AddSpawnsMenuID, "Back","4", 0, -1);	
 }
 
 public m_MainHandler(id, menu, item)
@@ -330,7 +330,7 @@ public m_MainHandler(id, menu, item)
 				case 2: formatex(szteam,charsmax(szteam), "CT");
 			}
 
-			client_print(id,print_chat,"Ближайшая точка возрождения: number %d , def: team = %s, org[%d,%d,%d], ang[%d,%d,%d], vang[%d,%d,%d]", 
+			client_print(id,print_chat,"The closest spawn: number %d , def: team = %s, org[%d,%d,%d], ang[%d,%d,%d], vang[%d,%d,%d]", 
 				g_Ent[id] + 1, szteam, g_SpawnVecs[g_Ent[id]][0], g_SpawnVecs[g_Ent[id]][1], g_SpawnVecs[g_Ent[id]][2], 
 				g_SpawnAngles[g_Ent[id]][0], g_SpawnAngles[g_Ent[id]][1], g_SpawnAngles[g_Ent[id]][2], 
 				g_SpawnVAngles[g_Ent[id]][0], g_SpawnVAngles[g_Ent[id]][1], g_SpawnVAngles[g_Ent[id]][2]);
@@ -351,7 +351,7 @@ public m_MainHandler(id, menu, item)
 					CT_num++;
 			}
 
-			client_print(id,print_chat,"Всего точек: %d; Для всех: %d; T: %d; CT: %d.^nОригинальных: X: %f  Y: %f  Z: %f",
+			client_print(id,print_chat,"Total Spawns: %d; Random: %d; T: %d; CT: %d.^nCurrent Origin: X: %f  Y: %f  Z: %f",
 				g_TotalSpawns, RD_num, TR_num, CT_num, Org[0], Org[1], Org[2]);
 
 			menu_display(id, g_MainMenuID, 0);
@@ -380,11 +380,11 @@ public c_Main(id, menu, item)
 		case 1:
 		{
 			if (g_TotalSpawns == MAX_SPAWNS) {
-				formatex(fItem, charsmax(fItem),"Добавлено максимальное количество точек возрождения");
+				formatex(fItem, charsmax(fItem),"Add Spawns - Max Spawn Limit Reached");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_DISABLED;
 			} else {
-				formatex(fItem, charsmax(fItem),"Добавить текущую позицию для возрождения");
+				formatex(fItem, charsmax(fItem),"Add current position to Spawn");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_ENABLED;
 			}
@@ -392,17 +392,17 @@ public c_Main(id, menu, item)
 		case 2:
 		{
 			if (g_TotalSpawns < 1) {
-				formatex(fItem, charsmax(fItem),"Редактировать точку - Нет доступных точек");
+				formatex(fItem, charsmax(fItem),"Edit Spawn - No spawns");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_DISABLED;
 
 			} else if (g_Ents[g_Ent[id]] == 0) {
-				formatex(fItem, charsmax(fItem),"Редактировать точку - Нет выбранных точек");
+				formatex(fItem, charsmax(fItem),"Edit Spawn - No spawn marked");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_DISABLED;
 
 			} else {
-				formatex(fItem, charsmax(fItem),"Редактировать ближайшую точку возрождения (желтая) в текущей позиции");
+				formatex(fItem, charsmax(fItem),"Edit closest spawn (yellow) to Current Position");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_ENABLED;
 			}
@@ -410,12 +410,12 @@ public c_Main(id, menu, item)
 		case 3:
 		{
 			if (g_TotalSpawns < 1) {
-				formatex(fItem, charsmax(fItem),"Удалит точку - Нет доступных точек возрождения");
+				formatex(fItem, charsmax(fItem),"Delete Spawn - No spawns");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_DISABLED;
 
 			} else if (g_Ents[g_Ent[id]] == 0) {
-				formatex(fItem, charsmax(fItem),"Удалить точку - нет выбранных точек возрождения");
+				formatex(fItem, charsmax(fItem),"Delete Spawn - No spawn marked");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_DISABLED;
 
@@ -426,12 +426,12 @@ public c_Main(id, menu, item)
 				new distance = get_distance(iorg, g_SpawnVecs[g_Ent[id]]);
 
 				if (distance > 200) {
-					formatex(fItem, charsmax(fItem),"Удалить точку - выбранная точка далеко");
+					formatex(fItem, charsmax(fItem),"Delete Spawn - Marked spawn far away");
 					menu_item_setname(menu, item, fItem);
 					return ITEM_DISABLED;
 
 				} else {
-					formatex(fItem, charsmax(fItem),"Удалить ближайшую точку возрождения");
+					formatex(fItem, charsmax(fItem),"Delete closest Spawn");
 					menu_item_setname(menu, item, fItem);
 					return ITEM_ENABLED;
 				}
@@ -502,12 +502,12 @@ public c_AddSpawns(id, menu, item)
 		case 1:
 		{
 			if (g_TotalSpawns == MAX_SPAWNS) {
-				formatex(fItem, charsmax(fItem),"Добавить точку аозрождения для всех - Достигнуть лимит точек");
+				formatex(fItem, charsmax(fItem),"Add a random spawn - Max Spawn Limit Reached");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_DISABLED;
 
 			} else {
-				formatex(fItem, charsmax(fItem),"Добавить точку аозрождения для всех");
+				formatex(fItem, charsmax(fItem),"Add Current Position as a random spawn");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_ENABLED;
 			}
@@ -515,12 +515,12 @@ public c_AddSpawns(id, menu, item)
 		case 2:
 		{
 			if (g_TotalSpawns == MAX_SPAWNS) {
-				formatex(fItem, charsmax(fItem),"Добавить точку возрождения для T - достигнут лимит точек");
+				formatex(fItem, charsmax(fItem),"Add a T spawn - Max Spawn Limit Reached");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_DISABLED;
 
 			} else {
-				formatex(fItem, charsmax(fItem),"Добавить текущую позицию для возрождения T");
+				formatex(fItem, charsmax(fItem),"Add Current Position as a T spawn");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_ENABLED;
 			}
@@ -528,12 +528,12 @@ public c_AddSpawns(id, menu, item)
 		case 3:
 		{
 			if (g_TotalSpawns == MAX_SPAWNS) {
-				formatex(fItem, charsmax(fItem),"Добавить точку возрождения для CT - достигнут лимит точек");
+				formatex(fItem, charsmax(fItem),"Add a CT spawn - Max Spawn Limit Reached");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_DISABLED;
 
 			} else {
-				formatex(fItem, charsmax(fItem),"Добавить текущую позицию для возрождения CT");
+				formatex(fItem, charsmax(fItem),"Add Current Position as a CT spawn");
 				menu_item_setname(menu, item, fItem);
 				return ITEM_ENABLED;
 			}

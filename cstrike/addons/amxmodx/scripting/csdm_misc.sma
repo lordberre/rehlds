@@ -121,7 +121,7 @@ public plugin_init()
 	register_clcmd("cl_rebuy", "generic_block");
 	register_clcmd("cl_setautobuy", "generic_block");
 	register_clcmd("cl_setrebuy", "generic_block");
-	register_clcmd("csdm_misc_sett_menu", "csdm_misc_sett_menu", ADMIN_MAP, "Меню настроек CSDM Разное");
+	register_clcmd("csdm_misc_sett_menu", "csdm_misc_sett_menu", ADMIN_MAP, "CSDM Misc Settings Menu");
 
 	register_concmd("csdm_pvlist", "pvlist");
 
@@ -135,24 +135,24 @@ public plugin_init()
 		g_ItemsInMenuNr = menu_items(g_SettingsMenu);
 		g_PageSettMenu = g_ItemsInMenuNr / 7;
 
-		g_MiscSettMenu = menu_create("Меню настроек CSDM Разное", "use_csdm_misc_menu");
+		g_MiscSettMenu = menu_create("CSDM Misc Settings Menu", "use_csdm_misc_menu");
 
-		menu_additem(g_SettingsMenu, "Настройки CSDM Разное", "csdm_misc_sett_menu", ADMIN_MAP);
+		menu_additem(g_SettingsMenu, "CSDM Misc Settings", "csdm_misc_sett_menu", ADMIN_MAP);
 
 		if (g_MiscSettMenu)
 		{
 			new callback = menu_makecallback("hook_misc_sett_display");
 
-			menu_additem(g_MiscSettMenu, "Скрыть задания на as_ картах [вкл/выкл]", "1", ADMIN_MAP, callback);
-			menu_additem(g_MiscSettMenu, "Скрыть закупочные зоны [вкл/выкл]", "2", ADMIN_MAP, callback);
-			menu_additem(g_MiscSettMenu, "Скрыть заданияна cs_ картах [вкл/выкл]", "3", ADMIN_MAP, callback);
-			menu_additem(g_MiscSettMenu, "Скрыть задания на de_ картах [вкл/выкл]", "4", ADMIN_MAP, callback);
-			menu_additem(g_MiscSettMenu, "Блокировать закупку [вкл/выкл]", "5", ADMIN_MAP, callback);
-			menu_additem(g_MiscSettMenu, "Показывать запас боеприпасов [вкл/выкл]", "6", ADMIN_MAP, callback);
-			menu_additem(g_MiscSettMenu, "Сообщать по радио о возрождении игрока [вкл/выкл]", "7", ADMIN_MAP, callback);
-			menu_additem(g_MiscSettMenu, "Скрыть деньги [вкл/выкл]", "8", ADMIN_MAP, callback);
-			menu_additem(g_MiscSettMenu, "Скрыть тайиер [вкл/выкл]", "9", ADMIN_MAP, callback);
-			menu_additem(g_MiscSettMenu, "Назад", "10", 0, -1);
+			menu_additem(g_MiscSettMenu, "Strip Objectives for as_ maps [Enabled/Disabled]", "1", ADMIN_MAP, callback);
+			menu_additem(g_MiscSettMenu, "Strip Buyzones from maps [Enabled/Disabled]", "2", ADMIN_MAP, callback);
+			menu_additem(g_MiscSettMenu, "Strip Objectives for cs_ maps [Enabled/Disabled]", "3", ADMIN_MAP, callback);
+			menu_additem(g_MiscSettMenu, "Strip Objectives for de_ maps [Enabled/Disabled]", "4", ADMIN_MAP, callback);
+			menu_additem(g_MiscSettMenu, "Block Buy [Enabled/Disabled]", "5", ADMIN_MAP, callback);
+			menu_additem(g_MiscSettMenu, "Ammo Refill [Enabled/Disabled]", "6", ADMIN_MAP, callback);
+			menu_additem(g_MiscSettMenu, "Radio Message at Respawn [Enabled/Disabled]", "7", ADMIN_MAP, callback);
+			menu_additem(g_MiscSettMenu, "Hide Money [Enabled/Disabled]", "8", ADMIN_MAP, callback);
+			menu_additem(g_MiscSettMenu, "Hide Timer [Enabled/Disabled]", "9", ADMIN_MAP, callback);
+			menu_additem(g_MiscSettMenu, "Back", "10", 0, -1);
 		}
 	}
 
@@ -504,7 +504,7 @@ public use_csdm_misc_menu(id, menu, item)
 				g_MapStripFlags |= MAPSTRIP_VIP;
 			}
 
-			client_print(id, print_chat, "Скрытие заданий на as_ картах %s.", (g_MapStripFlags & MAPSTRIP_VIP) ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM removig objectives for as_ maps %s.", (g_MapStripFlags & MAPSTRIP_VIP) ? "enabled" : "disabled");
 			log_amx("CSDM removig objectives for as_ maps %s.", (g_MapStripFlags & MAPSTRIP_VIP) ? "enabled" : "disabled");
 
 			menu_display(id, g_MiscSettMenu, 0);
@@ -513,7 +513,7 @@ public use_csdm_misc_menu(id, menu, item)
 			get_flags(g_MapStripFlags, flags, charsmax(flags));
 
 			csdm_write_cfg(id, "misc", "remove_objectives", flags);
-			client_print(id,print_chat,"Данные настройки вступят в силу после смены карты.");
+			client_print(id,print_chat,"CSDM - changing this setting will affect the game after changelevel command.");
 
 			return PLUGIN_HANDLED;
 		}
@@ -527,7 +527,7 @@ public use_csdm_misc_menu(id, menu, item)
 				g_MapStripFlags |= MAPSTRIP_BUY;
 			}
 
-			client_print(id, print_chat, "Скрытие закупочной зоны %s.", (g_MapStripFlags & MAPSTRIP_BUY) ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM removig buyzones from maps %s.", (g_MapStripFlags & MAPSTRIP_BUY) ? "enabled" : "disabled");
 			log_amx("CSDM removig buyzones for maps %s.", (g_MapStripFlags & MAPSTRIP_BUY) ? "enabled" : "disabled");
 
 			menu_display(id, g_MiscSettMenu, 0);
@@ -536,7 +536,7 @@ public use_csdm_misc_menu(id, menu, item)
 			get_flags(g_MapStripFlags, flags, charsmax(flags));
 
 			csdm_write_cfg(id, "misc", "remove_objectives", flags);
-			client_print(id,print_chat,"Данные настройки вступят в силу после смены карты.");
+			client_print(id,print_chat,"CSDM - changing this setting will affect the game after changelevel command.");
 
 			return PLUGIN_HANDLED;
 		}
@@ -550,7 +550,7 @@ public use_csdm_misc_menu(id, menu, item)
 				g_MapStripFlags |= MAPSTRIP_HOSTAGE;
 			}
 
-			client_print(id, print_chat, "Скрытие заданий на cs_ картах %s.", (g_MapStripFlags & MAPSTRIP_HOSTAGE) ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM removig objectives for cs_ maps %s.", (g_MapStripFlags & MAPSTRIP_HOSTAGE) ? "enabled" : "disabled");
 			log_amx("CSDM removig objectives for cs_ maps %s.", (g_MapStripFlags & MAPSTRIP_HOSTAGE) ? "enabled" : "disabled");
 
 			menu_display(id, g_MiscSettMenu, 0);
@@ -559,7 +559,7 @@ public use_csdm_misc_menu(id, menu, item)
 			get_flags(g_MapStripFlags, flags, charsmax(flags));
 
 			csdm_write_cfg(id, "misc", "remove_objectives", flags);
-			client_print(id,print_chat,"Данные настройки вступят в силу после смены карты.");
+			client_print(id,print_chat,"CSDM - changing this setting will affect the game after changelevel command.");
 
 			return PLUGIN_HANDLED;
 		}
@@ -573,7 +573,7 @@ public use_csdm_misc_menu(id, menu, item)
 				g_MapStripFlags |= MAPSTRIP_BOMB;
 			}
 
-			client_print(id, print_chat, "Скрытие заданий на de_ картах %s.", (g_MapStripFlags & MAPSTRIP_BOMB) ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM removig objectives for de_ maps %s.", (g_MapStripFlags & MAPSTRIP_BOMB) ? "enabled" : "disabled");
 			log_amx("CSDM removig objectives for de_ maps %s.", (g_MapStripFlags & MAPSTRIP_BOMB) ? "enabled" : "disabled");
 
 			menu_display(id, g_MiscSettMenu, 0);
@@ -582,7 +582,7 @@ public use_csdm_misc_menu(id, menu, item)
 			get_flags(g_MapStripFlags, flags, 4);
 
 			csdm_write_cfg(id, "misc", "remove_objectives", flags);
-			client_print(id,print_chat,"Данные настройки вступят в силу после смены карты.");
+			client_print(id,print_chat,"CSDM - changing this setting will affect the game after changelevel command.");
 
 			return PLUGIN_HANDLED;
 		}
@@ -590,7 +590,7 @@ public use_csdm_misc_menu(id, menu, item)
 		{
 			g_bBlockBuy = g_bBlockBuy ? false : true;
 
-			client_print(id, print_chat, "Скрытие закупочной зоны %s.", g_bBlockBuy ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM block buy %s.", g_bBlockBuy ? "enabled" : "disabled");
 			log_amx("CSDM block buy %s.", g_bBlockBuy ? "enabled" : "disabled");
 
 			menu_display(id, g_MiscSettMenu, 0);
@@ -608,7 +608,7 @@ public use_csdm_misc_menu(id, menu, item)
 		{
 			g_bAmmoRefill = g_bAmmoRefill? false : true;
 
-			client_print(id, print_chat, "Скрытие запаса боеприпасов %s.", g_bAmmoRefill ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM ammo refill %s.", g_bAmmoRefill ? "enabled" : "disabled");
 			log_amx("CSDM ammo refill %s.", g_bAmmoRefill ? "enabled" : "disabled");
 
 			menu_display(id, g_MiscSettMenu, 0);
@@ -620,7 +620,7 @@ public use_csdm_misc_menu(id, menu, item)
 		{
 			g_bRadioMsg = g_bRadioMsg? false : true;
 
-			client_print(id, print_chat, "Скрытие радио сообщений %s.", g_bRadioMsg ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM radio message %s.", g_bRadioMsg ? "enabled" : "disabled");
 			log_amx("CSDM radio message %s.", g_bRadioMsg ? "enabled" : "disabled");
 
 			menu_display(id, g_MiscSettMenu, 0);
@@ -632,7 +632,7 @@ public use_csdm_misc_menu(id, menu, item)
 		{
 			g_bHideMoney = g_bHideMoney? false : true;
 
-			client_print(id, print_chat, "Скрытие денег %s.", g_bHideMoney ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM hide money %s.", g_bHideMoney ? "enabled" : "disabled");
 			log_amx("CSDM hide money %s.", g_bHideMoney ? "enabled" : "disabled");
 
 			menu_display(id, g_MiscSettMenu, 1);
@@ -650,7 +650,7 @@ public use_csdm_misc_menu(id, menu, item)
 		{
 			g_bHideTimer = g_bHideTimer? false : true;
 
-			client_print(id, print_chat, "Скрытие таймера %s.", g_bHideTimer ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM hide timer %s.", g_bHideTimer ? "enabled" : "disabled");
 			log_amx("CSDM hide timer %s.", g_bHideTimer ? "enabled" : "disabled");
 
 			menu_display(id, g_MiscSettMenu, 1);
@@ -687,73 +687,73 @@ public hook_misc_sett_display(player, menu, item)
 	if (equali(command, "1"))
 	{
 		if (g_MapStripFlags & MAPSTRIP_VIP) {
-			menu_item_setname(menu, item, "Скрытие заданий на as_ картах включено");
+			menu_item_setname(menu, item, "Strip Objectives for as_ maps Enabled");
 		} else {
-			menu_item_setname(menu, item, "Скрытие заданий на as_ картах выключено");
+			menu_item_setname(menu, item, "Strip Objectives for as_ maps Disabled");
 		}
 
 	} else if (equali(command, "2")) {
 
 		if (g_MapStripFlags & MAPSTRIP_BUY) {
-			menu_item_setname(menu, item, "Скрытие закупочной заоны включено");
+			menu_item_setname(menu, item, "Strip Buyzones from maps Enabled");
 		} else {
-			menu_item_setname(menu, item, "Скрытие закупочной заоны выключено");
+			menu_item_setname(menu, item, "Strip Buyzones from maps Disabled");
 		}
 
 	} else if (equali(command, "3")) {
 
 		if (g_MapStripFlags & MAPSTRIP_HOSTAGE) {
-			menu_item_setname(menu, item, "Скрытие заданий на cs_ картах включено");
+			menu_item_setname(menu, item, "Strip Objectives for cs_ maps Enabled");
 		} else {
-			menu_item_setname(menu, item, "Скрытие заданий на cs_ картах выключено");
+			menu_item_setname(menu, item, "Strip Objectives for cs_ maps Disabled");
 		}
 
 	} else if (equali(command, "4")) {
 
 		if (g_MapStripFlags & MAPSTRIP_BOMB) {
-			menu_item_setname(menu, item, "Скрытие заданий на de_ картах включено");
+			menu_item_setname(menu, item, "Strip Objectives for de_ maps Enabled");
 		} else {
-			menu_item_setname(menu, item, "Скрытие заданий на de_ картах выключено");
+			menu_item_setname(menu, item, "Strip Objectives for de_ maps Disabled");
 		}
 
 	} else if (equali(command, "5")) {
 
 		if (g_bBlockBuy) {
-			menu_item_setname(menu, item, "Блокировка закупки включена");
+			menu_item_setname(menu, item, "Block Buy Enabled");
 		} else {
-			menu_item_setname(menu, item, "Блокировка закупки выключена");
+			menu_item_setname(menu, item, "Block Buy Disabled");
 		}
 
 	} else if (equali(command, "6")) {
 
 		if (g_bAmmoRefill) {
-			menu_item_setname(menu, item, "Запас боеприпасов включен");
+			menu_item_setname(menu, item, "Ammo Refill Enabled");
 		} else {
-			menu_item_setname(menu, item, "Запас боеприпасов выключен");
+			menu_item_setname(menu, item, "Ammo Refill Disabled");
 		}
 
 	} else if (equali(command, "7")) {
 
 		if (g_bRadioMsg) {
-			menu_item_setname(menu, item, "Сообщения по радио о возрождении игрока включено");
+			menu_item_setname(menu, item, "Radio Message at Respawn Enabled");
 		} else {
-			menu_item_setname(menu, item, "Сообщения по радио о возрождении игрока выключено");
+			menu_item_setname(menu, item, "Radio Message at Respawn Disabled");
 		}
 
 	} else if (equali(command, "8")) {
 
 		if (g_bHideMoney) {
-			menu_item_setname(menu, item, "Скрытие денег включено");
+			menu_item_setname(menu, item, "Hide Money Enabled");
 		} else {
-			menu_item_setname(menu, item, "Скрытие денег выключено");
+			menu_item_setname(menu, item, "Hide Money Disabled");
 		}
 
 	} else if (equali(command, "9")) {
 
 		if (g_bHideTimer) {
-			menu_item_setname(menu, item, "Скрытие таймера включено");
+			menu_item_setname(menu, item, "Hide Timer Enabled");
 		} else {
-			menu_item_setname(menu, item, "Скрытие таймера выключено");
+			menu_item_setname(menu, item, "Hide Timer Disabled");
 		}
 	}
 }

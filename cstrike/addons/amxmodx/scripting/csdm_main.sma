@@ -139,14 +139,14 @@ public native_write_cfg(id,num)
 			formatex(text, charsmax(text), "%s = %s", parameter, value);
 
 			if (write_file(g_filename, text, line - 1)) {
-				client_print(id, print_chat, "Конфигурация успешно сохранена");
+				client_print(id, print_chat, "CSDM - configuration saved successfully.");
 			}
 	
 		} else if (!bFoundSec || bErrorFindSect)  {
-			client_print(id, print_chat, "Конфигурация не сохранена. Не верно выбрано имя.");
+			client_print(id, print_chat, "CSDM - can't save the configuration - wrong section name.");
 	
 		} else if (!bFoundPar || bErrorFindParam) {
-			client_print(id, print_chat, "Конфигурация не сохранена. Не верно указан параметр.");
+			client_print(id, print_chat, "CSDM - can't save the configuration - wrong parameter name.");
 		}
 	}
 }
@@ -171,15 +171,15 @@ public plugin_init()
 	register_clcmd("say respawn", "say_respawn");
 	register_clcmd("say /respawn", "say_respawn");
 
-	register_clcmd("csdm_menu", "csdm_menu", ADMIN_MENU, "CSDM Меню");
-	register_clcmd("csdm_sett_menu", "csdm_sett_menu", ADMIN_MENU, "Меню настроек CSDM");
-	register_clcmd("csdm_main_sett_menu", "csdm_main_sett_menu", ADMIN_MENU, "Меню основных настроек CSDM");
+	register_clcmd("csdm_menu", "csdm_menu", ADMIN_MENU, "CSDM Menu");
+	register_clcmd("csdm_sett_menu", "csdm_sett_menu", ADMIN_MENU, "CSDM Settings Menu");
+	register_clcmd("csdm_main_sett_menu", "csdm_main_sett_menu", ADMIN_MENU, "CSDM Main Settings Menu");
 
-	register_concmd("csdm_enable", "csdm_enable", D_ACCESS, "Включить CSDM");
-	register_concmd("csdm_disable", "csdm_disable", D_ACCESS, "Выключить CSDM");
+	register_concmd("csdm_enable", "csdm_enable", D_ACCESS, "Enables CSDM");
+	register_concmd("csdm_disable", "csdm_disable", D_ACCESS, "Disables CSDM");
 	register_concmd("csdm_ctrl", "csdm_ctrl", D_ACCESS, "");
-	register_concmd("csdm_reload", "csdm_reload", D_ACCESS, "Перезагрузить конфигурацию CSDM");
-	register_concmd("csdm_cache", "cacheInfo", ADMIN_MAP, "Показать кешированную информацию");
+	register_concmd("csdm_reload", "csdm_reload", D_ACCESS, "Reloads CSDM Config");
+	register_concmd("csdm_cache", "cacheInfo", ADMIN_MAP, "Shows cache information");
 
 	AddMenuItem("CSDM Menu", "csdm_menu", D_ACCESS, D_PLUGIN);
 	g_MainMenu = menu_create("CSDM Menu", "use_csdm_menu");
@@ -187,21 +187,21 @@ public plugin_init()
 	new callback = menu_makecallback("hook_item_display");
 
 	g_SettingsMenu = menu_create("CSDM Settings Menu", "use_csdm_sett_menu");
-	menu_additem(g_MainMenu, "CSDM [вкл/выкл]", "csdm_ctrl", D_ACCESS, callback);
-	menu_additem(g_MainMenu, "Настройки CSDM", "csdm_sett_menu", D_ACCESS);
-	menu_additem(g_MainMenu, "Перезагрузить конфигурацию", "csdm_reload", D_ACCESS);
+	menu_additem(g_MainMenu, "CSDM [Enabled/Disabled]", "csdm_ctrl", D_ACCESS, callback);
+	menu_additem(g_MainMenu, "CSDM Settings", "csdm_sett_menu", D_ACCESS);
+	menu_additem(g_MainMenu, "Reload Config", "csdm_reload", D_ACCESS);
 
-	g_MainSettMenu = menu_create("Меню основных настроек CSDM", "use_csdm_mainsett_menu");
-	menu_additem(g_SettingsMenu, "Основные настройки CSDM", "csdm_main_sett_menu", D_ACCESS);
+	g_MainSettMenu = menu_create("CSDM Main Settings Menu", "use_csdm_mainsett_menu");
+	menu_additem(g_SettingsMenu, "CSDM Main Settings", "csdm_main_sett_menu", D_ACCESS);
 
 	if (g_MainSettMenu)
 	{
 		new str_callback = menu_makecallback("hook_settings_display");
 
-		menu_additem(g_MainSettMenu, "Скрывать оружие [вкл/выкл]", "strip_weap_ctrl", D_ACCESS, str_callback);
-		menu_additem(g_MainSettMenu, "Удалять бомбу [вкл/выкл]", "bomb_rem_ctrl", D_ACCESS, str_callback);
-		menu_additem(g_MainSettMenu, "Пердустановленные места возрождения [вкл/выкл]", "spawn_mode_ctrl", D_ACCESS, str_callback);
-		menu_additem(g_MainSettMenu, "Назад", "csdm_sett_back", D_ACCESS);
+		menu_additem(g_MainSettMenu, "Strip Weapons [Enabled/Disabled]", "strip_weap_ctrl", D_ACCESS, str_callback);
+		menu_additem(g_MainSettMenu, "Removing Bombs [Enabled/Disabled]", "bomb_rem_ctrl", D_ACCESS, str_callback);
+		menu_additem(g_MainSettMenu, "Preset Spawn Mode [Enabled/Disabled]", "spawn_mode_ctrl", D_ACCESS, str_callback);
+		menu_additem(g_MainSettMenu, "Back", "csdm_sett_back", D_ACCESS);
 	}
 
 	g_drop_fwd = CreateMultiForward("csdm_HandleDrop", ET_CONTINUE, FP_CELL, FP_CELL, FP_CELL);
@@ -305,9 +305,9 @@ public hook_item_display(player, menu, item)
 	if (equali(command, "csdm_ctrl"))
 	{
 		if (!csdm_active()) {
-			menu_item_setname(menu, item, "CSDM Выключен");
+			menu_item_setname(menu, item, "CSDM Disabled");
 		} else {
-			menu_item_setname(menu, item, "CSDM Включен");
+			menu_item_setname(menu, item, "CSDM Enabled");
 		}
 	}
 }
@@ -356,9 +356,9 @@ public csdm_reload(id)
 	}
 
 	if (csdm_reload_cfg(g_filename)) {
-		client_print(id, print_chat, "Конфигурация перезагруженна из файла.");
+		client_print(id, print_chat, "[CSDM] Config file reloaded.");
 	} else {
-		client_print(id, print_chat, "Не найден файл конфигурации.");
+		client_print(id, print_chat, "[CSDM] Unable to find config file.");
 	}
 
 	return PLUGIN_HANDLED;
@@ -393,9 +393,9 @@ public csdm_ctrl(id)
 	}
 
 	csdm_set_active( csdm_active() ? 0 : 1);
-	client_print(id, print_chat, "CSDM %s.", csdm_active()? "Включен" : "Выключен");
+	client_print(id, print_chat, "CSDM %s.", csdm_active()? "enabled" : "disabled");
 	csdm_write_cfg(id, "settings", "enabled", csdm_active() ? "1" : "0");
-	client_print(id, print_chat, "Карта будет перезагружена, что бы применить эти изменения.");
+	client_print(id, print_chat, "CSDM - the map will be reloaded to affect the change of this setting.");
 	set_task(3.0, "do_changelevel");
 
 	return PLUGIN_HANDLED;
@@ -414,7 +414,7 @@ public use_csdm_menu(id, menu, item)
 	}
 
 	if (paccess && !(get_user_flags(id) & paccess)) {
-		client_print(id, print_chat, "У вас нет доступа к этой опции.");
+		client_print(id, print_chat, "You do not have access to this menu option.");
 		return PLUGIN_HANDLED;
 	}
 
@@ -447,7 +447,7 @@ public use_csdm_sett_menu(id, menu, item)
 	}
 
 	if (paccess && !(get_user_flags(id) & paccess)) {
-		client_print(id, print_chat, "У вас нет доступа к этой опции.");
+		client_print(id, print_chat, "You do not have access to this menu option.");
 		return PLUGIN_HANDLED;
 	}
 
@@ -473,14 +473,14 @@ public use_csdm_mainsett_menu(id, menu, item)
 	}
 
 	if (paccess && !(get_user_flags(id) & paccess)) {
-		client_print(id, print_chat, "У вас нет доступа к этой опции.");
+		client_print(id, print_chat, "You do not have access to this menu option.");
 		return PLUGIN_HANDLED;
 	}
 
 	if (equali(command,"strip_weap_ctrl")) {
 		g_StripWeapons = (g_StripWeapons ? false:true);
 		menu_display(id, g_MainSettMenu, 0);
-		client_print(id, print_chat, "Скрытие оружия %s", g_StripWeapons ? "Включено" : "Выключено");
+		client_print(id, print_chat, "Strip Weapons %s", g_StripWeapons ? "enabled" : "disabled");
 		log_amx("CSDM strip weapons %s", g_StripWeapons ? "enabled" : "disabled");
 		csdm_write_cfg(id, "settings", "strip_weapons", g_StripWeapons ? "1" : "0");
 		return PLUGIN_HANDLED;
@@ -488,10 +488,10 @@ public use_csdm_mainsett_menu(id, menu, item)
 	} else if (equali(command,"bomb_rem_ctrl")) {
 		g_RemoveBomb = (g_RemoveBomb ? false:true);
 		menu_display(id, g_MainSettMenu, 0);
-		client_print(id, print_chat, "Удаление бомбы %s", g_RemoveBomb ? "Включено" : "Выключено");
+		client_print(id, print_chat, "Removing Bomb %s", g_RemoveBomb ? "enabled" : "disabled");
 		log_amx("CSDM removing bomb %s", g_RemoveBomb ? "enabled" : "disabled");
 		csdm_write_cfg(id, "settings", "remove_bomb", g_RemoveBomb ? "1" : "0");
-		client_print(id,print_chat,"Данные изменения вступят в силу после смены карты.");
+		client_print(id,print_chat,"CSDM - changing this setting will affect the game after changelevel command.");
 		return PLUGIN_HANDLED;
 
 	} else if (equali(command,"spawn_mode_ctrl")) {
@@ -513,7 +513,7 @@ public use_csdm_mainsett_menu(id, menu, item)
 		}
 
 		menu_display(id, g_MainSettMenu, 0);
-		client_print(id, print_chat, "Режим возрождения игроков установлен как %s", stylename);
+		client_print(id, print_chat, "Spawn style set to %s", stylename);
 		log_amx("CSDM spawn mode set to %s", stylename);
 		csdm_write_cfg(id, "settings", "spawnmode", (style == -1) ? "none" : "preset");
 
@@ -536,17 +536,17 @@ public hook_settings_display(player, menu, item)
 	if (equali(command, "strip_weap_ctrl"))
 	{
 		if (!g_StripWeapons) {
-			menu_item_setname(menu, item, "Скрытие оружия отключено");
+			menu_item_setname(menu, item, "Strip Weapons Disabled");
 		} else {
-			menu_item_setname(menu, item, "Скрытие оружия включено");
+			menu_item_setname(menu, item, "Strip Weapons Enabled");
 		}
 
 	} else if (equali(command, "bomb_rem_ctrl")) {
 
 		if (!g_RemoveBomb) {
-			menu_item_setname(menu, item, "Удаление бомбы отключено");
+			menu_item_setname(menu, item, "Removing Bomb Disabled");
 		} else {
-			menu_item_setname(menu, item, "Удаление бомбы включено");
+			menu_item_setname(menu, item, "Removing Bomb Enabled");
 		}
 
 	} else if (equali(command,"spawn_mode_ctrl")) {
@@ -554,9 +554,9 @@ public hook_settings_display(player, menu, item)
 		new style = csdm_curstyle();
 
 		if (style == -1) {
-			menu_item_setname(menu, item, "Предустановленные точки возрождения включены");
+			menu_item_setname(menu, item, "Preset Spawn Mode Disabled");
 		} else {
-			menu_item_setname(menu, item, "Предустановленные точки возрождения выключены");
+			menu_item_setname(menu, item, "Preset Spawn Mode Enabled");
 		}
 	}
 }
@@ -569,9 +569,9 @@ public csdm_enable(id)
 
 	if (!csdm_active()) {
 		csdm_set_active(1);
-		client_print(id, print_chat, "CSDM включен.");
+		client_print(id, print_chat, "CSDM enabled.");
 		csdm_write_cfg(id, "settings", "enabled", "1");
-		client_print(id, print_chat, "Эти настройки вступят в силу после смены карты.");
+		client_print(id, print_chat, "CSDM - the map will be reloaded to affect the change of this setting.");
 		set_task(3.0, "do_changelevel");
 	}
 
@@ -586,9 +586,9 @@ public csdm_disable(id)
 
 	if (csdm_active()) {
 		csdm_set_active(0);
-		client_print(id, print_chat, "CSDM выключен.");
+		client_print(id, print_chat, "CSDM disabled.");
 		csdm_write_cfg(id, "settings", "enabled", "0");
-		client_print(id, print_chat, "Эти настройки вступят в силу после смены карты.");
+		client_print(id, print_chat, "CSDM - the map will be reloaded to affect the change of this setting.");
 		set_task(3.0, "do_changelevel");
 	}
 
@@ -598,7 +598,7 @@ public csdm_disable(id)
 public say_respawn(id)
 {
 	if (g_options[CSDM_OPTION_SAYRESPAWN] == CSDM_SET_DISABLED || !csdm_active()) {
-		client_print(id, print_chat, "Эта команда отключена!");
+		client_print(id, print_chat, "[CSDM] This command is disabled!");
 		return PLUGIN_HANDLED;
 	}
 

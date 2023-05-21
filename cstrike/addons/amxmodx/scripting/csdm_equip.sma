@@ -54,25 +54,25 @@ new UsedWpsT[ITEMTYPES_NUM] = {0, ...};
 new UsedWpsCT[ITEMTYPES_NUM] = {0, ...};
 
 //Menus
-new const g_SecMenu[] = "Меню Первичного оружия";		// Menu Name
+new const g_SecMenu[] = "CSDM: Primary Weapons";		// Menu Name
 new g_SecMenuID = -1;													// Menu ID
 new g_cSecondary;														// Menu Callback
 new bool:g_mSecStatus = true;												// Menu Available?
 
-new const g_PrimMenu[] = "Меню Вторичного оружия";
+new const g_PrimMenu[] = "CSDM: Secondary Weapons";
 new g_PrimMenuID = -1;
 new g_cPrimary;
 new bool:g_mPrimStatus = true;
 
-new const g_ArmorMenu[] = "Броня";
+new const g_ArmorMenu[] = "CSDM: Armor";
 new g_ArmorMenuID = -1;
 new bool:g_mArmorStatus = true;
 
-new const g_NadeMenu[] = "Гранаты";
+new const g_NadeMenu[] = "CSDM: Grenades";
 new g_NadeMenuID = -1;
 new bool:g_mNadeStatus = true;
 
-new const g_EquipMenu[] = "Экипировка";
+new const g_EquipMenu[] = "CSDM: Equip";
 new g_EquipMenuID = -1;
 new g_cEquip;
 
@@ -210,28 +210,28 @@ public plugin_init()
 		g_ItemsInMenuNr = menu_items(g_SettingsMenu);
 		g_PageSettMenu = g_ItemsInMenuNr / 7;
 
-		g_EquipSettMenu = menu_create("Меню настроек экипировки", "use_csdm_equip_menu");
+		g_EquipSettMenu = menu_create("CSDM Equip Settings Menu", "use_csdm_equip_menu");
 
-		menu_additem(g_SettingsMenu, "Настройки экипировки", "csdm_equip_sett_menu", ADMIN_MAP);
+		menu_additem(g_SettingsMenu, "CSDM Equip Settings", "csdm_equip_sett_menu", ADMIN_MAP);
 
 		if(g_EquipSettMenu)
 		{
 			new callback = menu_makecallback("hook_equip_sett_display");
 
-			menu_additem(g_EquipSettMenu, "Меню первичной экипировки [вкл/выкл]", "1", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Меню вторичной экипировки [вкл/выкл]", "2", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Меню брони [вкл/выкл]", "3", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Меню гранат [вкл/выкл]", "4", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Автоматическая выдача брони [вкл/выкл]", "5", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Автоматическая выдача шлема [вкл/выкл]", "6", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Автоматическая выдача гранат [вкл/выкл]", "7", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Автоматическая выдача щипцов [вкл/выкл]", "8", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Автоматическая выдача ночного виденья [вкл/выкл]", "9", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Световые гранаты [вкл/выкл]", "10", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Дымовые гранаты [вкл/выкл]", "11", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Разрывные гранаты [вкл/выкл]", "12", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Разрешить всегда использовать меню оружия [Вкл/Выкл]", "13", ADMIN_MAP, callback);
-			menu_additem(g_EquipSettMenu, "Назад", "14", 0, -1);
+			menu_additem(g_EquipSettMenu, "Equip Menu Primary [Enabled/Disabled]", "1", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Equip Menu Secondary [Enabled/Disabled]", "2", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Equip Menu Armor [Enabled/Disabled]", "3", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Equip Menu Grenades [Enabled/Disabled]", "4", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Auto equip with Armor [Enabled/Disabled]", "5", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Auto equip with Helmet [Enabled/Disabled]", "6", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Auto equip with Grenades [Enabled/Disabled]", "7", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Auto equip with Defuser [Enabled/Disabled]", "8", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Auto equip with Nightvision [Enabled/Disabled]", "9", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Flashbang [Enabled/Disabled]", "10", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Smoke grenade [Enabled/Disabled]", "11", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "HE grenade [Enabled/Disabled]", "12", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Always Allow Gun Menu [Enabled/Disabled]", "13", ADMIN_MAP, callback);
+			menu_additem(g_EquipSettMenu, "Back", "14", 0, -1);
 		}
 	} else {
 		log_amx("CSDM - csdm_equip - no main plugin loaded");
@@ -974,19 +974,19 @@ public m_NadeHandler(id, menu, item)
 buildMenu()
 {
 	//Equip Menu
-	menu_additem(g_EquipMenuID, "Новая экипировка", "1", 0, -1);
-	menu_additem(g_EquipMenuID, "Предыдущий выбор", "2", 0, g_cEquip);
-	menu_additem(g_EquipMenuID, "Предыдущий выбор и больше не спрашивать", "3", 0, g_cEquip);
+	menu_additem(g_EquipMenuID, "New Weapons", "1", 0, -1);
+	menu_additem(g_EquipMenuID, "Previous Setup", "2", 0, g_cEquip);
+	menu_additem(g_EquipMenuID, "Previous Setup + Don't show menu again", "3", 0, g_cEquip);
 	menu_setprop(g_EquipMenuID, MPROP_EXIT, MEXIT_NEVER);
 
 	//Armor Menu
-	menu_additem(g_ArmorMenuID, "Да, выдать броню", "1", 0, -1);
-	menu_additem(g_ArmorMenuID, "Без брони", "2", 0, -1);
+	menu_additem(g_ArmorMenuID, "Yes, armor up", "1", 0, -1);
+	menu_additem(g_ArmorMenuID, "No Armor", "2", 0, -1);
 	menu_setprop(g_ArmorMenuID, MPROP_EXIT, MEXIT_NEVER);
 
 	//Nade Menu
-	menu_additem(g_NadeMenuID, "Все гранаты", "1", 0, -1);
-	menu_additem(g_NadeMenuID, "Без гранат", "2", 0, -1);
+	menu_additem(g_NadeMenuID, "All Grenades", "1", 0, -1);
+	menu_additem(g_NadeMenuID, "No Grenades", "2", 0, -1);
 	menu_setprop(g_NadeMenuID, MPROP_EXIT, MEXIT_NEVER);
 
 	return PLUGIN_HANDLED;
@@ -1341,7 +1341,7 @@ public enableMenu(id)
 	if(!g_mShowuser[id])
 	{
 		g_mShowuser[id] = true;
-		client_print(id, print_chat, "[CSDM] Меню экипировки было вновь включено.");
+		client_print(id, print_chat, "[CSDM] Your equip menu has been re-enabled.");
 
 		if(!g_MenuState[id]) {
 			g_MenuState[id] = 1;
@@ -1351,13 +1351,13 @@ public enableMenu(id)
 	} else if(!g_AlwaysAllowGunMenu || !g_AmmoRefill || (g_WeaponStayTime > 5)) {
 
 		if(!g_AlwaysAllowGunMenu) 
-			client_print(id, print_chat, "[CSDM] Меню экипировки уже включено. Вы уже должны иметь оружие");
+			client_print(id, print_chat, "[CSDM] Your equip menu is already enabled - You should have a gun already.");
 
 		else if(!g_AmmoRefill) 
-			client_print(id, print_chat, "[CSDM] Вы не можете использовать меню экипировки т.к. у вас уже есть оружие или возможность выбрать другое оружие отключена.");
+			client_print(id, print_chat, "[CSDM] You cannot use guns menu when You have a gun already and ammorefill is disabled.");
 
 		else if(g_WeaponStayTime > 5)
-			client_print(id, print_chat, "[CSDM] Вы не можете использовать меню экипировки т.к. у вас уже есть оружие слишком длительное время");
+			client_print(id, print_chat, "[CSDM] You cannot use guns menu when You have a gun already and weapon_stay time is too long.");
 	
 	} else {
 		g_MenuState[id] = 1;
@@ -1521,7 +1521,7 @@ public use_csdm_equip_menu(id, menu, item)
 		{
 			g_mPrimStatus = g_mPrimStatus? false : true;
 
-			client_print(id, print_chat, "Отображение меню первичного оружия %s.", g_mPrimStatus ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM displaying primary gun menu %s.", g_mPrimStatus ? "enabled" : "disabled");
 			log_amx("CSDM displaying primary gun menu %s.", g_mPrimStatus ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 0);
@@ -1533,7 +1533,7 @@ public use_csdm_equip_menu(id, menu, item)
 		{
 			g_mSecStatus = g_mSecStatus? false : true;
 
-			client_print(id, print_chat, "Отображение меню вторичного оружия %s.", g_mSecStatus ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM displaying secondary gun menu %s.", g_mSecStatus ? "enabled" : "disabled");
 			log_amx("CSDM displaying secondary gun menu %s.", g_mSecStatus ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 0);
@@ -1548,7 +1548,7 @@ public use_csdm_equip_menu(id, menu, item)
 			if(g_mArmorStatus)
 				g_mAutoArmor = false;
 
-			client_print(id, print_chat, "Отображение меню брони %s.", g_mArmorStatus ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM displaying armor menu %s.", g_mArmorStatus ? "enabled" : "disabled");
 			log_amx("CSDM displaying armor menu %s.", g_mArmorStatus ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 0);
@@ -1563,7 +1563,7 @@ public use_csdm_equip_menu(id, menu, item)
 			if(g_mNadeStatus)
 				g_mAutoNades = false;
 
-			client_print(id, print_chat, "Отображение меню гранат %s.", g_mNadeStatus ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM displaying nades menu %s.", g_mNadeStatus ? "enabled" : "disabled");
 			log_amx("CSDM displaying nades menu %s.", g_mNadeStatus ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 0);
@@ -1583,7 +1583,7 @@ public use_csdm_equip_menu(id, menu, item)
 				g_mArmorStatus = false;
 			}
 
-			client_print(id, print_chat, "Авто выдача брони %s.", g_mAutoArmor ? "Включена" : "Выключена");
+			client_print(id, print_chat, "CSDM auto equiping players with armor %s.", g_mAutoArmor ? "enabled" : "disabled");
 			log_amx("CSDM auto equiping players with armor %s.", g_mAutoArmor ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 0);
@@ -1604,7 +1604,7 @@ public use_csdm_equip_menu(id, menu, item)
 				g_mArmorStatus = false;
 			}
 
-			client_print(id, print_chat, "Авто выдача шлема %s.", (g_Armor == 2) ? "Включена" : "Выключена");
+			client_print(id, print_chat, "CSDM auto equiping players with helmet %s.", (g_Armor == 2) ? "enabled" : "disabled");
 			log_amx("CSDM auto equiping players with helmet %s.", (g_Armor == 2) ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 0);
@@ -1619,7 +1619,7 @@ public use_csdm_equip_menu(id, menu, item)
 			if(g_mAutoNades)
 				g_mNadeStatus = false;
 
-			client_print(id, print_chat, "Авто выдача гранат %s.", g_mAutoNades ? "Включена" : "Выключена");
+			client_print(id, print_chat, "CSDM auto equiping players with grenades %s.", g_mAutoNades ? "enabled" : "disabled");
 			log_amx("CSDM auto equiping players with grenades %s.", g_mAutoNades ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 0);
@@ -1631,7 +1631,7 @@ public use_csdm_equip_menu(id, menu, item)
 		{
 			g_DefuseKit = g_DefuseKit? false : true;
 
-			client_print(id, print_chat, "Авто выдача щипцов (только спецназ) %s.", g_DefuseKit ? "Включена" : "Выключена");
+			client_print(id, print_chat, "CSDM auto equiping players with defuser (CTs) %s.", g_DefuseKit ? "enabled" : "disabled");
 			log_amx("CSDM auto equiping players with defuser (CTs) %s.", g_DefuseKit ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 1);
@@ -1643,7 +1643,7 @@ public use_csdm_equip_menu(id, menu, item)
 		{
 			g_NightVision = g_NightVision? false : true;
 
-			client_print(id, print_chat, "Авто выдача ночного выденья %s.", g_NightVision ? "Включена" : "Выключена");
+			client_print(id, print_chat, "CSDM auto equiping players with nightvision %s.", g_NightVision ? "enabled" : "disabled");
 			log_amx("CSDM auto equiping players with nightvision %s.", g_NightVision ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 1);
@@ -1655,7 +1655,7 @@ public use_csdm_equip_menu(id, menu, item)
 		{
 			g_Flash = g_Flash? false : true;
 
-			client_print(id, print_chat, "Использование световых гранат %s.", g_Flash ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM usage of flashbangs is %s.", g_Flash ? "enabled" : "disabled");
 			log_amx("CSDM usage of flashbangs is %s.", g_Flash ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 1);
@@ -1667,7 +1667,7 @@ public use_csdm_equip_menu(id, menu, item)
 		{
 			g_Smoke = g_Smoke? false : true;
 
-			client_print(id, print_chat, "Использование дымовых гранат %s.", g_Smoke ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM usage of smoke grenades is %s.", g_Smoke ? "enabled" : "disabled");
 			log_amx("CSDM usage of smoke grenades is %s.", g_Smoke ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 1);
@@ -1679,7 +1679,7 @@ public use_csdm_equip_menu(id, menu, item)
 		{
 			g_Nade = g_Nade? false : true;
 
-			client_print(id, print_chat, "Использование всех гранат %s.", g_Nade ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM usage of he nades is %s.", g_Nade ? "enabled" : "disabled");
 			log_amx("CSDM usage of he nades is %s.", g_Nade ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 1);
@@ -1691,7 +1691,7 @@ public use_csdm_equip_menu(id, menu, item)
 		{
 			g_AlwaysAllowGunMenu = g_AlwaysAllowGunMenu? false : true;
 
-			client_print(id, print_chat, "Использование меню экипировки всегда %s.", g_AlwaysAllowGunMenu ? "Включено" : "Выключено");
+			client_print(id, print_chat, "CSDM Always Allow Gun Menu is %s.", g_AlwaysAllowGunMenu ? "enabled" : "disabled");
 			log_amx("CSDM Always Allow Gun Menu is %s.", g_AlwaysAllowGunMenu ? "enabled" : "disabled");
 
 			menu_display(id, g_EquipSettMenu, 1);
@@ -1717,44 +1717,44 @@ public hook_equip_sett_display(player, menu, item)
 	menu_item_getinfo(menu, item, paccess, command, charsmax(command), _, _, call);
 
 	if (equali(command, "1")) {
-		if (g_mPrimStatus) menu_item_setname(menu, item, "Меню первичного оружия включено");
-		else menu_item_setname(menu, item, "Меню первичного оружия выключено");
+		if (g_mPrimStatus) menu_item_setname(menu, item, "Equip Menu Primary Enabled");
+		else menu_item_setname(menu, item, "Equip Menu Primary Disabled");
 	} else if (equali(command, "2")) {
-		if (g_mSecStatus) menu_item_setname(menu, item, "Меню вторичного оружия включено");
-		else menu_item_setname(menu, item, "Меню вторичного оружия выключено");
+		if (g_mSecStatus) menu_item_setname(menu, item, "Equip Menu Secondary Enabled");
+		else menu_item_setname(menu, item, "Equip Menu Secondary Disabled");
 	} else if (equali(command, "3")) {
-		if (g_mArmorStatus) menu_item_setname(menu, item, "Меню брони включено");
-		else menu_item_setname(menu, item, "Меню брони выключено");
+		if (g_mArmorStatus) menu_item_setname(menu, item, "Equip Menu Armor Enabled");
+		else menu_item_setname(menu, item, "Equip Menu Armor Disabled");
 	} else if (equali(command, "4")) {
 		if (g_mNadeStatus) menu_item_setname(menu, item, "Equip Menu Grenades Enabled");
 		else menu_item_setname(menu, item, "Equip Menu Grenades Disabled");
 	} else if (equali(command, "5")) {
-		if (g_mAutoArmor) menu_item_setname(menu, item, "Авто экипировка броней включена");
-		else menu_item_setname(menu, item, "Авто экипировка броней выключена");
+		if (g_mAutoArmor) menu_item_setname(menu, item, "Auto equip with Armor Enabled");
+		else menu_item_setname(menu, item, "Auto equip with Armor Disabled");
 	} else if (equali(command, "6")) {
-		if (g_mAutoArmor && g_Armor == 2) menu_item_setname(menu, item, "Авто экипировка шлемом включена");
-		else menu_item_setname(menu, item, "Авто экипировка шлемом выключена");
+		if (g_mAutoArmor && g_Armor == 2) menu_item_setname(menu, item, "Auto equip with Helmet Enabled");
+		else menu_item_setname(menu, item, "Auto equip with Helmet Disabled");
 	} else if (equali(command, "7")) {
-		if (g_mAutoNades) menu_item_setname(menu, item, "Авто экипировка гранатами включена");
-		else menu_item_setname(menu, item, "Авто экипировка гранатами включена");
+		if (g_mAutoNades) menu_item_setname(menu, item, "Auto equip with Grenades Enabled");
+		else menu_item_setname(menu, item, "Auto equip with Grenades Disabled");
 	} else if (equali(command, "8")) {
-		if (g_DefuseKit) menu_item_setname(menu, item, "Авто экипировка щипцами включена");
-		else menu_item_setname(menu, item, "Авто экипировка щипцами включена");
+		if (g_DefuseKit) menu_item_setname(menu, item, "Auto equip with Defuser Enabled");
+		else menu_item_setname(menu, item, "Auto equip with Defuser Disabled");
 	} else if (equali(command, "9")) {
-		if (g_NightVision) menu_item_setname(menu, item, "Авто экипировка ночным виденьем включена");
-		else menu_item_setname(menu, item, "Авто экипировка ночным виденьем включена");
+		if (g_NightVision) menu_item_setname(menu, item, "Auto equip with Nightvision Enabled");
+		else menu_item_setname(menu, item, "Auto equip with Nightvision Disabled");
 	} else if (equali(command, "10")) {
-		if (g_Flash) menu_item_setname(menu, item, "Световые гранаты включены");
-		else menu_item_setname(menu, item, "Световые гранаты выключены");
+		if (g_Flash) menu_item_setname(menu, item, "Flashbang Enabled");
+		else menu_item_setname(menu, item, "Flashbang Disabled");
 	} else if (equali(command, "11")) {
-		if (g_Smoke) menu_item_setname(menu, item, "Дымовые гранаты включены");
-		else menu_item_setname(menu, item, "Дымовые гранаты выключены");
+		if (g_Smoke) menu_item_setname(menu, item, "Smoke grenade Enabled");
+		else menu_item_setname(menu, item, "Smoke grenade Disabled");
 	} else if (equali(command, "12")) {
-		if (g_Nade) menu_item_setname(menu, item, "Разрывные гранаты включены");
-		else menu_item_setname(menu, item, "Разрывные гранаты выключены");
+		if (g_Nade) menu_item_setname(menu, item, "HE grenade Enabled");
+		else menu_item_setname(menu, item, "HE grenade Disabled");
 	} else if (equali(command, "13")) {
-		if (g_AlwaysAllowGunMenu) menu_item_setname(menu, item, "Использование меню экипировки всегда, включено");
-		else menu_item_setname(menu, item, "Использование меню экипировки всегда, выключено");
+		if (g_AlwaysAllowGunMenu) menu_item_setname(menu, item, "Always Allow Gun Menu Enabled");
+		else menu_item_setname(menu, item, "Always Allow Gun Menu Disabled");
 	}
 }
 

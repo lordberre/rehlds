@@ -39,7 +39,7 @@ public csdm_Init(const version[])
 public plugin_init()
 {
 	register_plugin("ReCDSM Stop Respawn", "1.0", "teame06");
-	register_clcmd("amx_respawn", "restore_respawn", ADMIN_LEVEL_G, "Остановить/Восстановить Возрождения");
+	register_clcmd("amx_respawn", "restore_respawn", ADMIN_LEVEL_G, "Stop/Restore Spawns");
 }
 
 public csdm_PostDeath(killer, victim, headshot, const weapon[])
@@ -64,12 +64,12 @@ public restore_respawn(id,lvl,cid)
 			if(g_StopRespawn[id]) {
 				g_StopRespawn[id] = false;
 				csdm_respawn(id);
-				console_print(id, "Возрождения восстановлены");
+				console_print(id, "Spawning is re-enable");
 
 			} else {
 				g_StopRespawn[id] = true;
 				user_silentkill(id);
-				console_print(id, "Возрождения остановлены");
+				console_print(id, "Stop re-spawning");
 			}
 
 			return PLUGIN_HANDLED;

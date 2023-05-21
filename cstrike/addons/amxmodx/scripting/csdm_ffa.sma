@@ -88,12 +88,12 @@ public plugin_init()
 {
 	register_plugin(PLUGIN, VERSION, AUTHOR);
 
-	register_concmd("csdm_ffa_enable", "csdm_ffa_enable", ACCESS, "Включить FFA");
-	register_concmd("csdm_ffa_disable", "csdm_ffa_disable", ACCESS, "Выключить FFA");
-	register_concmd("csdm_ffa_ctrl", "csdm_ffa_ctrl", ACCESS, "Управление FFA");
-	register_concmd("csdm_radar_ctrl", "csdm_radar_ctrl", ACCESS, "Управление радаром");
+	register_concmd("csdm_ffa_enable", "csdm_ffa_enable", ACCESS, "Enables FFA Mode");
+	register_concmd("csdm_ffa_disable", "csdm_ffa_disable", ACCESS, "Disables FFA Mode");
+	register_concmd("csdm_ffa_ctrl", "csdm_ffa_ctrl", ACCESS, "FFA Toggling");
+	register_concmd("csdm_radar_ctrl", "csdm_radar_ctrl", ACCESS, "Radar Toggling");
 
-	register_clcmd("csdm_ffa_sett_menu", "csdm_ffa_sett_menu", ACCESS, "Меню настроек FFA");
+	register_clcmd("csdm_ffa_sett_menu", "csdm_ffa_sett_menu", ACCESS, "CSDM FFA Settings Menu");
 
 	register_event("ResetHUD", "eventResetHud", "be");
 
@@ -108,18 +108,18 @@ public plugin_init()
 		g_ItemsInMenuNr = menu_items(g_SettingsMenu);
 		g_PageSettMenu = g_ItemsInMenuNr / 7;
 
-		menu_additem(g_SettingsMenu, "Настройки FFA", "csdm_ffa_sett_menu", ACCESS);
+		menu_additem(g_SettingsMenu, "CSDM FFA Settings", "csdm_ffa_sett_menu", ACCESS);
 
-		g_FfaSettMenu = menu_create("Меню настроек FFA", "use_csdm_ffa_menu");
+		g_FfaSettMenu = menu_create("CSDM FFA Settings Menu", "use_csdm_ffa_menu");
 
 		if (g_FfaSettMenu)
 		{
 			new cb_ffa = menu_makecallback("hook_ffa_menu");
-			menu_additem(g_FfaSettMenu, "FFA [вкл/выкл]", "csdm_ffa_ctrl", ADMIN_MAP, cb_ffa);
+			menu_additem(g_FfaSettMenu, "FFA [Enabled/Disabled]", "csdm_ffa_ctrl", ADMIN_MAP, cb_ffa);
 
 			new cb_radar = menu_makecallback("hook_radar_menu");
-			menu_additem(g_FfaSettMenu, "Радар [показать/скрыть]", "csdm_radar_ctrl", ADMIN_MAP, cb_radar);
-			menu_additem(g_FfaSettMenu, "Назад", "csdm_sett_back", 0, -1);
+			menu_additem(g_FfaSettMenu, "Radar [Scrambled/Disabled]", "csdm_radar_ctrl", ADMIN_MAP, cb_radar);
+			menu_additem(g_FfaSettMenu, "Back", "csdm_sett_back", 0, -1);
 		}
 	}
 
@@ -238,7 +238,7 @@ public use_csdm_ffa_menu(id, menu, item)
 	}
 
 	if (paccess && !(get_user_flags(id) & paccess)) {
-		client_print(id, print_chat, "У вас нет прав доступа к этой опции.");
+		client_print(id, print_chat, "You do not have access to this menu option.");
 		return PLUGIN_HANDLED;
 	}
 
@@ -264,7 +264,7 @@ public csdm_ffa_ctrl(id, level, cid)
 	g_Enabled = (g_Enabled ? false : true);
 	csdm_set_ffa(g_Enabled ? 1 : 0);
 
-	client_print(id, print_chat, "Режим FFA %s.", g_Enabled ? "Включен" : "Выключен");
+	client_print(id, print_chat, "[CSDM] CSDM FFA mode changed to %s.", g_Enabled ? "on" : "off");
 
 	if (csdm_active() && csdm_get_ffa())
 	{
@@ -318,9 +318,9 @@ public hook_ffa_menu(player, menu, item)
 	if (equali(command, "csdm_ffa_ctrl"))
 	{
 		if (!g_Enabled) {
-			menu_item_setname(menu, item, "Режим FFA выключен");
+			menu_item_setname(menu, item, "FFA Disabled");
 		} else {
-			menu_item_setname(menu, item, "Режим FFA включен");
+			menu_item_setname(menu, item, "FFA Enabled");
 		}
 	}
 }
@@ -334,9 +334,9 @@ public hook_radar_menu(player, menu, item)
 	if (equali(command, "csdm_radar_ctrl"))
 	{
 		if (!g_hideradar) {
-			menu_item_setname(menu, item, "Радар показан");
+			menu_item_setname(menu, item, "Radar Scrambled");
 		} else {
-			menu_item_setname(menu, item, "Радар скрыт");
+			menu_item_setname(menu, item, "Radar Disabled");
 		}
 	}
 }
@@ -350,7 +350,7 @@ public csdm_ffa_enable(id, level, cid)
 	csdm_set_ffa(1);
 	g_Enabled = true;
 
-	client_print(id, print_chat, "Режим FFA включен.");
+	client_print(id, print_chat, "CSDM FFA enabled.");
 
 	if (g_hideradar) {
 		client_cmd(0, "hideradar");
@@ -368,7 +368,7 @@ public csdm_ffa_disable(id, level, cid)
 	csdm_set_ffa(0);
 	g_Enabled = false;
 
-	client_print(id, print_chat, "Режим FFA выключен.");
+	client_print(id, print_chat, "CSDM FFA disabled.");
 
 	if (g_hideradar) {
 		client_cmd(0, "drawradar");

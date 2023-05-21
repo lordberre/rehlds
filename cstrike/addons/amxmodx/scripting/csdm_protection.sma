@@ -88,17 +88,17 @@ public plugin_init()
 		g_SettingsMenu = csdm_settings_menu();
 		g_ItemsInMenuNr = menu_items(g_SettingsMenu);
 		g_PageSettMenu = g_ItemsInMenuNr / 7;
-		g_ProtSettMenu = menu_create("Меню настроек CSDM Защита", "use_csdm_prot_menu");
+		g_ProtSettMenu = menu_create("CSDM Protection Settings Menu", "use_csdm_prot_menu");
 
-		menu_additem(g_SettingsMenu, "Настройки CSDM Защита", "csdm_prot_sett_menu", ACCESS);
+		menu_additem(g_SettingsMenu, "CSDM Protection Settings", "csdm_prot_sett_menu", ACCESS);
 
 		if (g_ProtSettMenu) {
 
 			new cb_protect = menu_makecallback("hook_prot_sett_display");
 
-			menu_additem(g_ProtSettMenu, "Защита при появлении [вкл/выкл]", "1", ACCESS, cb_protect);
-			menu_additem(g_ProtSettMenu, "Свечение при зажите [вкл/выкл]", "2", ACCESS, cb_protect);
-			menu_additem(g_ProtSettMenu, "Назад", "3", 0, -1);
+			menu_additem(g_ProtSettMenu, "Spawn Protection [Enabled/Disabled]", "1", ACCESS, cb_protect);
+			menu_additem(g_ProtSettMenu, "Glowing on Spawn [Enabled/Disabled]", "2", ACCESS, cb_protect);
+			menu_additem(g_ProtSettMenu, "Back", "3", 0, -1);
 		}
 	}
 }
@@ -269,7 +269,7 @@ public use_csdm_prot_menu(id, menu, item)
 	}
 
 	if (paccess && !(get_user_flags(id) & paccess)) {
-		client_print(id, print_chat, "У вас нет прав доступа к этой опции.");
+		client_print(id, print_chat, "You do not have access to this menu option.");
 		return PLUGIN_HANDLED;
 	}
 
@@ -278,14 +278,14 @@ public use_csdm_prot_menu(id, menu, item)
 		case 1:
 		{
 			g_Enabled = (g_Enabled ? false : true);
-			client_print(id, print_chat, "Защита при появлении %s.", g_Enabled ? "Включена" : "Выключена");
+			client_print(id, print_chat, "[CSDM] CSDM Spawn Protection setting changed to %s.", g_Enabled ? "enabled" : "disabled");
 			csdm_write_cfg(id, "protection", "enabled", g_Enabled ? "1" : "0");
 			menu_display(id, g_ProtSettMenu, 0);
 		}
 		case 2:
 		{
 			g_Glowing = (g_Glowing ? false : true);
-			client_print(id, print_chat, "Свечение при защите %s.", g_Glowing ? "Включено" : "Выключено");
+			client_print(id, print_chat, "[CSDM] CSDM Spawn Glowing setting changed to %s.", g_Glowing ? "enabled" : "disabled");
 			csdm_write_cfg(id, "protection", "glowing", g_Glowing ? "1" : "0");
 			menu_display(id, g_ProtSettMenu, 0);
 		}
@@ -304,17 +304,17 @@ public hook_prot_sett_display(player, menu, item)
 	if (equali(command, "1"))
 	{
 		if (!g_Enabled) {
-			menu_item_setname(menu, item, "Защита при появлении выключена");
+			menu_item_setname(menu, item, "Spawn Protection Disabled");
 		} else {
-			menu_item_setname(menu, item, "Защита при появлении включена");
+			menu_item_setname(menu, item, "Spawn Protection Enabled");
 		}
 	}
 	else if (equali(command, "2"))
 	{
 		if (!g_Glowing) {
-			menu_item_setname(menu, item, "Свечение при защите выключено");
+			menu_item_setname(menu, item, "Spawn Glowing Disabled");
 		} else {
-			menu_item_setname(menu, item, "Свечение при защите включено");
+			menu_item_setname(menu, item, "Spawn Glowing Enabled");
 		}
 	}
 }

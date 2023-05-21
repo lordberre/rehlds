@@ -55,7 +55,7 @@ public plugin_init()
 {
 	register_plugin(PLUGINNAME, VERSION, AUTHORS);
 
-	register_concmd("stripper_ctrl", "stripper_ctrl", ADMIN_MAP, "Скрытие дополнительных объектов");
+	register_concmd("stripper_ctrl", "stripper_ctrl", ADMIN_MAP, "Stripping extra objectives Toggling");
 
 	new main_plugin = module_exists("csdm_main") ? true : false;
 
@@ -65,7 +65,7 @@ public plugin_init()
 		g_ItemsInMenuNr = menu_items(g_sett_menu);
 
 		new callback = menu_makecallback("hook_strip_sett_display");
-		menu_additem(g_sett_menu, "Скрытие дополнительных объектов [вкл/выкл]", "stripper_ctrl", ADMIN_MAP, callback);
+		menu_additem(g_sett_menu, "Strip Extra Objectives [Enabled/Disabled]", "stripper_ctrl", ADMIN_MAP, callback);
 
 		g_PageStrExEn = g_ItemsInMenuNr / 7;
 	}
@@ -121,12 +121,12 @@ public stripper_ctrl(id, level, cid)
 
 	g_Enabled = g_Enabled ? false : true;
 
-	client_print(id, print_chat, "Скрытие дополнительных объектов на картах %s.", g_Enabled ? "Включено" : "Выключено");
+	client_print(id, print_chat, "CSDM removig extra entities from maps %s.", g_Enabled ? "enabled" : "disabled");
 	log_amx("CSDM removig extra entities from maps %s.", g_Enabled ? "enabled" : "disabled");
 
 	menu_display(id, g_sett_menu, g_PageStrExEn);
 	csdm_write_cfg(id, "stripper", "enabled", g_Enabled ? "1" : "0");
-	client_print(id, print_chat,"Данные настройки вступят в силу после смены карты");
+	client_print(id, print_chat,"CSDM - changing this setting will affect the game after changelevel command");
 
 	return PLUGIN_HANDLED;
 }
@@ -140,10 +140,10 @@ public hook_strip_sett_display(player, menu, item)
 	if (equali(command, "stripper_ctrl")) {
 
 		if (g_Enabled) {
-			menu_item_setname(menu, item, "Скрытие дополнительных объектов включено");
+			menu_item_setname(menu, item, "Strip Extra Objectives Enabled");
 
 		} else {
-			menu_item_setname(menu, item, "Скрытие дополнительных объектов выключено");
+			menu_item_setname(menu, item, "Strip Extra Objectives Disabled");
 		}
 	}
 }
