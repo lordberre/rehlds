@@ -101,7 +101,7 @@ RUN sed -i 's/dlls\/hl\.so/addons\/metamod\/dlls\/metamod.so/g' /opt/steam/hlds/
 RUN curl -sqL "$amxmod_url_with_version" | tar -C /opt/steam/hlds/$mod/ -zxvf - \
     && echo 'linux addons/amxmodx/dlls/amxmodx_mm_i386.so' >> /opt/steam/hlds/$mod/addons/metamod/plugins.ini
 RUN curl -sqL "$amxmod_cstrike_url_with_version" | tar -C /opt/steam/hlds/$mod/ -zxvf -
-RUN cat /opt/steam/hlds/$mod/mapcycle.txt >> /opt/steam/hlds/$mod/addons/amxmodx/configs/maps.ini
+RUN cat /opt/steam/hlds/$mod/mapcycle.txt > /opt/steam/hlds/$mod/addons/amxmodx/configs/maps.ini
 
 # Install Anti-cheats
 RUN mkdir -p /opt/steam/anticheats
